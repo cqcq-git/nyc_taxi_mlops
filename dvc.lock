@@ -1,0 +1,36 @@
+schema: '2.0'
+stages:
+  preprocess_train:
+    cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-01.parquet 
+      data/processed/train.parquet
+    deps:
+    - path: data/raw/yellow_tripdata_2026-01.parquet
+      hash: md5
+      md5: eadd527e67c4b329c2cf871f5991cbbc
+      size: 64165080
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: b4e62ed10e823958a4baeddda8b12b37
+      size: 1264
+    outs:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 3efef5cc87519fdc2c15f76081ab31e2
+      size: 13520580
+  preprocess_validation:
+    cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-02.parquet 
+      data/processed/test.parquet
+    deps:
+    - path: data/raw/yellow_tripdata_2026-02.parquet
+      hash: md5
+      md5: 81d8f3a5c1d50509e65d3839c05bf952
+      size: 58683353
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: b4e62ed10e823958a4baeddda8b12b37
+      size: 1264
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 4e0a90f8e2e45939749a8ae1319e3d93
+      size: 12125594
