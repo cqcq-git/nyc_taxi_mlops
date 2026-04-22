@@ -15,6 +15,6 @@ wheels/
 mlruns/
 mlflow.db
 .claude/
-data/
 model/
+
 
