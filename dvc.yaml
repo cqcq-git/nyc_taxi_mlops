@@ -1,6 +1,6 @@
 stages:
   preprocess_train:
-    cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-01.parquet data/processed/train.parquet
+    cmd: uv run python src/data/preprocess.py data/raw/yellow_tripdata_2026-01.parquet data/processed/train.parquet
     deps:
       - src/data/preprocess.py
       - data/raw/yellow_tripdata_2026-01.parquet
@@ -8,7 +8,7 @@ stages:
       - data/processed/train.parquet
 
   preprocess_validation:
-    cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-02.parquet data/processed/test.parquet
+    cmd: uv run python src/data/preprocess.py data/raw/yellow_tripdata_2026-02.parquet data/processed/test.parquet
     deps:
       - src/data/preprocess.py
       - data/raw/yellow_tripdata_2026-02.parquet
