@@ -7,10 +7,59 @@ stages:
     outs:
       - data/processed/train.parquet
 
-  preprocess_validation:
+  preprocess_test:
     cmd: uv run python src/data/preprocess.py data/raw/yellow_tripdata_2026-02.parquet data/processed/test.parquet
     deps:
       - src/data/preprocess.py
       - data/raw/yellow_tripdata_2026-02.parquet
     outs:
       - data/processed/test.parquet
+
+  train_model:
+    cmd: uv run python src/train/train_model.py
+    deps:
+      - src/train/train_model.py
+      - data/processed/train.parquet
+    outs:
+      - model/xgboost_model.pkl
+
+  tune_model:
+    cmd: uv run python src/train/tune.py
+    deps:
+      - src/train/tune.py
+      - data/processed/train.parquet
+    outs:
+      - model/xgboost_tuned_model.pkl
+
+  tune_model_cv:
+    cmd: uv run python src/train/tune_cv.py
+    deps:
+      - src/train/tune_cv.py
+      - data/processed/train.parquet
+    outs:
+      - model/xgboost_tuned_cv_model.pkl
+
+  evaluate_model:
+    cmd: uv run python src/evaluate/evaluate_model.py
+    deps:
+      - src/evaluate/evaluate_model.py
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+      - model/xgboost_model.pkl
+      - model/xgboost_tuned_model.pkl
+      - model/xgboost_tuned_cv_model.pkl
+    outs:
+      - reports/tables/test_metrics.json
+      - reports/tables/overfitting_check.json
+      - reports/tables/slice_analysis_dayofweek.json
+      - reports/tables/slice_analysis_hour.json
+      - reports/tables/error_analysis_top10.json
+
+  register_model:
+    cmd: uv run python src/train/register_model.py
+    deps:
+      - src/train/register_model.py
+      - reports/tables/test_metrics.json
+      - model/xgboost_model.pkl
+      - model/xgboost_tuned_model.pkl
+      - model/xgboost_tuned_cv_model.pkl
