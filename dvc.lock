@@ -1,8 +1,8 @@
 schema: '2.0'
 stages:
   preprocess_train:
-    cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-01.parquet 
-      data/processed/train.parquet
+    cmd: uv run python src/data/preprocess.py 
+      data/raw/yellow_tripdata_2026-01.parquet data/processed/train.parquet
     deps:
     - path: data/raw/yellow_tripdata_2026-01.parquet
       hash: md5
@@ -15,7 +15,7 @@ stages:
     outs:
     - path: data/processed/train.parquet
       hash: md5
-      md5: 3efef5cc87519fdc2c15f76081ab31e2
+      md5: 88668296e7fdd8dcb026211bda490f3c
       size: 13520580
   preprocess_validation:
     cmd: python src/data/preprocess.py data/raw/yellow_tripdata_2026-02.parquet 
@@ -34,3 +34,139 @@ stages:
       hash: md5
       md5: 4e0a90f8e2e45939749a8ae1319e3d93
       size: 12125594
+  preprocess_test:
+    cmd: uv run python src/data/preprocess.py 
+      data/raw/yellow_tripdata_2026-02.parquet data/processed/test.parquet
+    deps:
+    - path: data/raw/yellow_tripdata_2026-02.parquet
+      hash: md5
+      md5: 81d8f3a5c1d50509e65d3839c05bf952
+      size: 58683353
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: b4e62ed10e823958a4baeddda8b12b37
+      size: 1264
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 8d779633fbc0d9da080a091963fa787b
+      size: 12125594
+  train_model:
+    cmd: uv run python src/train/train_model.py
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88668296e7fdd8dcb026211bda490f3c
+      size: 13520580
+    - path: src/train/train_model.py
+      hash: md5
+      md5: 79e84d5c5552b5d9d9f6f52506d2398c
+      size: 2331
+    outs:
+    - path: model/xgboost_model.pkl
+      hash: md5
+      md5: e2f4818f19addf72f70fbb6b5949c1d0
+      size: 498770
+  tune_model:
+    cmd: uv run python src/train/tune.py
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88668296e7fdd8dcb026211bda490f3c
+      size: 13520580
+    - path: src/train/tune.py
+      hash: md5
+      md5: 287eb9185f2a1fd763cc1fef0199e710
+      size: 3059
+    outs:
+    - path: model/xgboost_tuned_model.pkl
+      hash: md5
+      md5: d75bc6266ad1abc0f5d34c477d4bfdf9
+      size: 6039540
+  tune_model_cv:
+    cmd: uv run python src/train/tune_cv.py
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88668296e7fdd8dcb026211bda490f3c
+      size: 13520580
+    - path: src/train/tune_cv.py
+      hash: md5
+      md5: d1ba4f37594cd03831c510badc3fdeb1
+      size: 3614
+    outs:
+    - path: model/xgboost_tuned_cv_model.pkl
+      hash: md5
+      md5: b3ceeb7e055138a7aa048b3c85da2e23
+      size: 4056497
+  evaluate_model:
+    cmd: uv run python src/evaluate/evaluate_model.py
+    deps:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 8d779633fbc0d9da080a091963fa787b
+      size: 12125594
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 88668296e7fdd8dcb026211bda490f3c
+      size: 13520580
+    - path: model/xgboost_model.pkl
+      hash: md5
+      md5: e2f4818f19addf72f70fbb6b5949c1d0
+      size: 498770
+    - path: model/xgboost_tuned_cv_model.pkl
+      hash: md5
+      md5: b3ceeb7e055138a7aa048b3c85da2e23
+      size: 4056497
+    - path: model/xgboost_tuned_model.pkl
+      hash: md5
+      md5: d75bc6266ad1abc0f5d34c477d4bfdf9
+      size: 6039540
+    - path: src/evaluate/evaluate_model.py
+      hash: md5
+      md5: 4eaea164fa5139c33c290be0fba15166
+      size: 10491
+    outs:
+    - path: reports/tables/error_analysis_top10.json
+      hash: md5
+      md5: 81b0f9b15107a3f5f75af1c66a762bac
+      size: 6614
+    - path: reports/tables/overfitting_check.json
+      hash: md5
+      md5: 199ebe917cb73e2d6c1d286925b3951d
+      size: 447
+    - path: reports/tables/slice_analysis_dayofweek.json
+      hash: md5
+      md5: 58b1f8b96aae187d5139d44962d72043
+      size: 4035
+    - path: reports/tables/slice_analysis_hour.json
+      hash: md5
+      md5: 920af967f1f7299394d83a21adc78086
+      size: 13276
+    - path: reports/tables/test_metrics.json
+      hash: md5
+      md5: 5ce96fed0326e8c96577bfa544a13283
+      size: 793
+  register_model:
+    cmd: uv run python src/train/register_model.py
+    deps:
+    - path: model/xgboost_model.pkl
+      hash: md5
+      md5: e2f4818f19addf72f70fbb6b5949c1d0
+      size: 498770
+    - path: model/xgboost_tuned_cv_model.pkl
+      hash: md5
+      md5: b3ceeb7e055138a7aa048b3c85da2e23
+      size: 4056497
+    - path: model/xgboost_tuned_model.pkl
+      hash: md5
+      md5: d75bc6266ad1abc0f5d34c477d4bfdf9
+      size: 6039540
+    - path: reports/tables/test_metrics.json
+      hash: md5
+      md5: 5ce96fed0326e8c96577bfa544a13283
+      size: 793
+    - path: src/train/register_model.py
+      hash: md5
+      md5: 521f87d05e4f9655d26ff3af0ab2a972
+      size: 1582

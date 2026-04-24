@@ -41,10 +41,11 @@ def train_model():
 
         # log split info and model params
         mlflow.log_param("val_size", val_size)
-        mlflow.log_param("random_state", random_state)
         mlflow.log_param("train_rows", len(X_train))
         mlflow.log_param("val_rows", len(X_val))
-        mlflow.log_params(params)
+        # log model params
+        for key, value in params.items():
+            mlflow.log_param(key, value)
 
         # train
         model = XGBRegressor(**params)

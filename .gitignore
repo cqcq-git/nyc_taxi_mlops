@@ -9,12 +9,23 @@ wheels/
 # Virtual environments
 .venv
 
+# Environment variables
 .env
 .DS_Store
 .ipynb_checkpoints/
-mlruns/
+
+# ml pipelines
 mlflow.db
-.claude/
+mlflow_server.log
+mlartifacts/
+mlruns/
 model/
+reports/
+
+#others
+.claude/
+
+
+
 
 
