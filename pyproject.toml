@@ -5,20 +5,25 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "alembic<1.11",
-    "dvc>=3.67.1",
-    "great-expectations>=1.16.1",
-    "jupyter>=1.1.1",
-    "matplotlib>=3.10.8",
-    "mlflow==1.27.0",
+    "fastapi>=0.136.1",
+    "joblib>=1.5.3",
     "numpy>=2.4.4",
-    "optuna>=4.8.0",
     "pandas>=3.0.2",
-    "protobuf<4",
     "pyarrow>=23.0.1",
+    "pydantic>=2.13.3",
     "scikit-learn>=1.8.0",
-    "seaborn>=0.13.2",
-    "setuptools<82",
-    "sqlalchemy<2",
+    "uvicorn>=0.46.0",
     "xgboost>=3.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "dvc>=3.67.1",
+    "evidently>=0.7.21",
+    "great-expectations>=1.17.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.9",
+    "mlflow>=1.27.0",
+    "optuna>=4.8.0",
+    "seaborn>=0.13.2",
 ]

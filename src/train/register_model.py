@@ -1,10 +1,13 @@
 import os
+import shutil
+from pathlib import Path
 import joblib
 import mlflow
 import mlflow.xgboost
 
 TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
 REGISTERED_MODEL_NAME = "nyc_taxi_duration_predictor"
+PRODUCTION_MODEL_PATH = Path("model/production_model.pkl")
 
 MODEL_PATHS = {
     "xgboost_baseline": "model/xgboost_model.pkl",
@@ -30,6 +33,12 @@ model_path = MODEL_PATHS[best_model]
 print(f"Best model from evaluation: {best_model}")
 print(f"Loading model from: {model_path}")
 
+# copy best model to stable production path
+PRODUCTION_MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+shutil.copy2(model_path, PRODUCTION_MODEL_PATH)
+print(f"Copied best model to: {PRODUCTION_MODEL_PATH}")
+
+
 model = joblib.load(model_path)
 
 # log and register model
@@ -39,7 +48,7 @@ with mlflow.start_run(run_name=f"register_{best_model}") as run:
     mlflow.log_param("selected_model", best_model)
     mlflow.log_param("source_evaluation_run_id", eval_run.info.run_id)
     mlflow.log_param("local_model_path", model_path)
-
+    mlflow.log_param("production_model_path", str(PRODUCTION_MODEL_PATH))
     mlflow.xgboost.log_model(model, artifact_path="model")
 
     model_uri = f"runs:/{run.info.run_id}/model"

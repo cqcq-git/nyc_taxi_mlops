@@ -16,6 +16,8 @@ uv run mlflow server \
 
 sleep 5
 
+# run the pipeline
 dvc repro
 
+# Cleanup: stop MLflow server
 lsof -t -i :5000 | xargs kill 2>/dev/null || true
