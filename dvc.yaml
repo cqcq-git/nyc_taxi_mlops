@@ -63,3 +63,5 @@ stages:
       - model/xgboost_model.pkl
       - model/xgboost_tuned_model.pkl
       - model/xgboost_tuned_cv_model.pkl
+    outs:
+      - model/production_model.pkl

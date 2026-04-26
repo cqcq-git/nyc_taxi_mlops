@@ -10,7 +10,28 @@ if [ ! -d ".git" ]; then
 fi
 
 # add dependencies
-uv add pandas numpy scikit-learn xgboost jupyter matplotlib seaborn pyarrow mlflow optuna dvc joblib
+# production deps: only what the inference container needs, keep it minimal
+uv add \
+  fastapi \
+  uvicorn \
+  pydantic \
+  xgboost \
+  pandas \
+  numpy \
+  scikit-learn \
+  joblib \
+  pyarrow
+# dev deps: training, experimentation, exploration tools
+uv add --dev \
+  mlflow \
+  optuna \
+  great-expectations \
+  evidently \
+  dvc \
+  jupyter \
+  matplotlib \
+  seaborn
+
 
 # create directory structure
 mkdir -p \
@@ -30,6 +51,30 @@ mkdir -p \
   monitoring \
   docker
 
+# --- .dockerignore ---
+# create if missing, ensures small Docker images from day one
+if [ ! -f ".dockerignore" ]; then
+  cat > .dockerignore << 'EOF'
+.venv/
+__pycache__/
+*.pyc
+.git/
+.dvc/
+.dvc/cache/
+data/
+notebooks/
+mlruns/
+mlflow.db
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.env
+*.ipynb
+tests/
+EOF
+fi
+
+
 # download taxi data only if missing
 if [ ! -f data/raw/yellow_tripdata_2026-01.parquet ]; then
   curl -L -o data/raw/yellow_tripdata_2026-01.parquet \
@@ -42,3 +87,5 @@ if [ ! -f data/raw/yellow_tripdata_2026-02.parquet ]; then
 fi
 
 echo "Setup complete!"
+echo "Next steps:"
+echo "1. Run the pipeline: ./scripts/run_pipeline.sh"

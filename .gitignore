@@ -19,7 +19,8 @@ mlflow.db
 mlflow_server.log
 mlartifacts/
 mlruns/
-model/
+model/*.pkl
+!model/*.dvc
 reports/
 
 #others
