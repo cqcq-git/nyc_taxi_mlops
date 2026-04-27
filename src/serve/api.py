@@ -1,11 +1,11 @@
+import time
 from pathlib import Path
 
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
 from prometheus_client import Counter, Histogram, make_asgi_app
-import time
+from pydantic import BaseModel, Field
 
 MODEL_PATH = Path("model/production_model.pkl")
 
@@ -115,4 +115,4 @@ def predict(data: TripFeatures):
         raise HTTPException(
             status_code=500,
             detail=f"Prediction failed: {e}",
-        )
+        ) from e

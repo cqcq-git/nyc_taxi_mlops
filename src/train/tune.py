@@ -10,7 +10,6 @@ from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 
-
 RANDOM_STATE = 42
 VAL_SIZE = 0.3
 N_TRIALS = 20

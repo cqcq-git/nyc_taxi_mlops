@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 
 from src.serve.api import app
 
-
 client = TestClient(app)
 
 
@@ -52,4 +51,3 @@ def test_predict_invalid_input():
     response = client.post("/predict", json=payload)
 
     assert response.status_code == 422
-    

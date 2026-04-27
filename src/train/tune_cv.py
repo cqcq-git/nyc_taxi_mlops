@@ -11,7 +11,6 @@ from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import KFold
 from xgboost import XGBRegressor
 
-
 N_SPLITS = 5
 RANDOM_STATE = 42
 N_TRIALS = 20
