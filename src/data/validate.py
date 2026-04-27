@@ -7,17 +7,23 @@ def validate_dataset(path: str) -> None:
 
     # schema checks
     expected_columns = {
-        'PULocationID', 'DOLocationID', 'trip_distance',
-        'passenger_count', 'pickup_hour', 'pickup_dayofweek',
-        'pickup_month', 'duration'
+        "PULocationID",
+        "DOLocationID",
+        "trip_distance",
+        "passenger_count",
+        "pickup_hour",
+        "pickup_dayofweek",
+        "pickup_month",
+        "duration",
     }
-    assert set(df.columns) == expected_columns, \
+    assert set(df.columns) == expected_columns, (
         f"Unexpected columns: {set(df.columns) ^ expected_columns}"
+    )
 
     # range checks
-    assert df['duration'].between(1, 60).all(), "Duration out of range"
-    assert df['trip_distance'].gt(0).all(), "Non-positive distance found"
-    assert df['pickup_hour'].between(0, 23).all(), "Invalid hour"
+    assert df["duration"].between(1, 60).all(), "Duration out of range"
+    assert df["trip_distance"].gt(0).all(), "Non-positive distance found"
+    assert df["pickup_hour"].between(0, 23).all(), "Invalid hour"
 
     # no missing values
     assert df.isnull().sum().sum() == 0, "Unexpected nulls"

@@ -15,10 +15,12 @@ def check_data_drift(reference_path: str, current_path: str, output_path: str):
 
     print(f"Reference: {len(reference)} rows | Current: {len(current)} rows")
 
-    report = Report([
-        DataDriftPreset(),
-        DataSummaryPreset(),
-    ])
+    report = Report(
+        [
+            DataDriftPreset(),
+            DataSummaryPreset(),
+        ]
+    )
 
     evaluation = report.run(reference_data=reference, current_data=current)
 
@@ -56,9 +58,11 @@ def check_prediction_drift(
         f"std={current['prediction'].std():.2f}"
     )
 
-    report = Report([
-        DataDriftPreset(columns=["prediction"]),
-    ])
+    report = Report(
+        [
+            DataDriftPreset(columns=["prediction"]),
+        ]
+    )
 
     evaluation = report.run(reference_data=reference, current_data=current)
 

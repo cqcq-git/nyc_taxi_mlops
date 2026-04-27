@@ -1,6 +1,7 @@
 import os
 import shutil
 from pathlib import Path
+
 import joblib
 import mlflow
 import mlflow.xgboost
@@ -58,7 +59,4 @@ with mlflow.start_run(run_name=f"register_{best_model}") as run:
         name=REGISTERED_MODEL_NAME,
     )
 
-    print(
-        f"Registered model '{REGISTERED_MODEL_NAME}' "
-        f"version {registered_model.version}"
-    )
+    print(f"Registered model '{REGISTERED_MODEL_NAME}' version {registered_model.version}")
