@@ -25,9 +25,7 @@ def train_model():
     )
 
     # set up MLflow
-    mlflow.set_tracking_uri(
-        os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
-    )
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
     mlflow.set_experiment("nyc_taxi_duration")
 
     with mlflow.start_run():
@@ -69,11 +67,7 @@ def train_model():
         joblib.dump(model, "model/xgboost_model.pkl")
 
         print(f"Train rows: {len(X_train)} | Val rows: {len(X_val)}")
-        print(
-            f"Train RMSE: {train_rmse:.3f} | "
-            f"Val RMSE: {val_rmse:.3f} | "
-            f"Val MAE: {val_mae:.3f}"
-        )
+        print(f"Train RMSE: {train_rmse:.3f} | Val RMSE: {val_rmse:.3f} | Val MAE: {val_mae:.3f}")
 
 
 if __name__ == "__main__":

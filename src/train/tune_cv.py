@@ -66,9 +66,7 @@ if __name__ == "__main__":
     X = df.drop("duration", axis=1)
     y = df["duration"]
 
-    mlflow.set_tracking_uri(
-        os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
-    )
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
     mlflow.set_experiment("nyc_taxi_tuning")
 
     with mlflow.start_run(run_name="optuna_5fold_cv"):

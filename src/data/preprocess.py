@@ -7,26 +7,31 @@ def preprocess(input_path: str, output_path: str) -> None:
     df = pd.read_parquet(input_path)
 
     # compute trip duration in minutes
-    df['duration'] = (
-        df['tpep_dropoff_datetime'] - df['tpep_pickup_datetime']
+    df["duration"] = (
+        df["tpep_dropoff_datetime"] - df["tpep_pickup_datetime"]
     ).dt.total_seconds() / 60
 
     # filter unrealistic durations
-    df = df[(df['duration'] >= 1) & (df['duration'] <= 60)]
+    df = df[(df["duration"] >= 1) & (df["duration"] <= 60)]
 
     # filter non-positive distances
-    df = df[df['trip_distance'] > 0]
+    df = df[df["trip_distance"] > 0]
 
     # extract time features
-    df['pickup_hour'] = df['tpep_pickup_datetime'].dt.hour
-    df['pickup_dayofweek'] = df['tpep_pickup_datetime'].dt.dayofweek
-    df['pickup_month'] = df['tpep_pickup_datetime'].dt.month
+    df["pickup_hour"] = df["tpep_pickup_datetime"].dt.hour
+    df["pickup_dayofweek"] = df["tpep_pickup_datetime"].dt.dayofweek
+    df["pickup_month"] = df["tpep_pickup_datetime"].dt.month
 
     # keep relevant columns
     columns_to_keep = [
-        'PULocationID', 'DOLocationID', 'trip_distance',
-        'passenger_count', 'pickup_hour', 'pickup_dayofweek',
-        'pickup_month', 'duration'
+        "PULocationID",
+        "DOLocationID",
+        "trip_distance",
+        "passenger_count",
+        "pickup_hour",
+        "pickup_dayofweek",
+        "pickup_month",
+        "duration",
     ]
     df = df[columns_to_keep].dropna()
 
@@ -38,4 +43,5 @@ def preprocess(input_path: str, output_path: str) -> None:
 
 if __name__ == "__main__":
     import sys
+
     preprocess(sys.argv[1], sys.argv[2])

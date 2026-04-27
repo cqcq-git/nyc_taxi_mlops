@@ -92,7 +92,9 @@ def overfitting_check(models, X_train, y_train, X_test, y_test):
             }
         )
 
-        print(f"  {model_name:<25} {train_rmse:>12.3f} {test_rmse:>12.3f} {gap:>+12.3f} {status:<20}")
+        print(
+            f"  {model_name:<25} {train_rmse:>12.3f} {test_rmse:>12.3f} {gap:>+12.3f} {status:<20}"
+        )
 
     return pd.DataFrame(rows)
 
@@ -162,7 +164,9 @@ def error_analysis(models, X, y, top_n=10):
         worst_indices = np.argsort(errors)[-top_n:][::-1]
 
         print(f"\n--- {model_name} ---")
-        print(f"  {'Actual':>10} {'Predicted':>10} {'Error':>10} {'PU Zone':>10} {'DO Zone':>10} {'Distance':>10}")
+        print(
+            f"  {'Actual':>10} {'Predicted':>10} {'Error':>10} {'PU Zone':>10} {'DO Zone':>10} {'Distance':>10}"
+        )
         print(f"  {'-' * 70}")
 
         for rank, idx in enumerate(worst_indices, start=1):
@@ -195,7 +199,9 @@ def model_comparison_summary(test_metrics_df):
     print("MODEL COMPARISON SUMMARY")
     print(f"{'=' * 70}")
 
-    print(f"\n  {'Model':<25} {'RMSE':>10} {'MAE':>10} {'R²':>10} {'Within 5min':>12} {'Within 10min':>13}")
+    print(
+        f"\n  {'Model':<25} {'RMSE':>10} {'MAE':>10} {'R²':>10} {'Within 5min':>12} {'Within 10min':>13}"
+    )
     print(f"  {'-' * 80}")
 
     best_row = test_metrics_df.sort_values("rmse").iloc[0]
@@ -236,6 +242,7 @@ def log_dataframe(df, artifact_file):
 
     mlflow.log_artifact(str(output_path), artifact_path=str(output_path.parent))
 
+
 def evaluate_all():
     train_df = pd.read_parquet("data/processed/train.parquet")
     test_df = pd.read_parquet("data/processed/test.parquet")
@@ -247,9 +254,7 @@ def evaluate_all():
 
     models = load_models()
 
-    mlflow.set_tracking_uri(
-        os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
-    )
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000"))
     mlflow.set_experiment("nyc_taxi_evaluation")
 
     with mlflow.start_run(run_name="model_comparison"):
@@ -321,7 +326,9 @@ def evaluate_all():
         mlflow.log_param("train_rows", len(X_train))
         mlflow.log_param("test_rows", len(X_test))
 
-        print("\n✓ All metrics and analysis tables logged to MLflow experiment 'nyc_taxi_evaluation'")
+        print(
+            "\n✓ All metrics and analysis tables logged to MLflow experiment 'nyc_taxi_evaluation'"
+        )
 
     return best_model
 

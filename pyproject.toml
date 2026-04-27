@@ -22,9 +22,20 @@ dev = [
     "dvc>=3.67.1",
     "evidently>=0.7.21",
     "great-expectations>=1.17.0",
+    "httpx>=0.28.1",
     "jupyter>=1.1.1",
     "matplotlib>=3.10.9",
     "mlflow>=1.27.0",
     "optuna>=4.8.0",
+    "pytest>=9.0.3",
+    "ruff>=0.15.12",
     "seaborn>=0.13.2",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B"]
+ignore = ["E501"]
