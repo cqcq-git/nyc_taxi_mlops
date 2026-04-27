@@ -4,7 +4,8 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-
+from prometheus_client import Counter, Histogram, make_asgi_app
+import time
 
 MODEL_PATH = Path("model/production_model.pkl")
 
@@ -31,6 +32,26 @@ if not MODEL_PATH.exists():
 
 model = joblib.load(MODEL_PATH)
 
+PREDICTION_COUNT = Counter(
+    "predictions_total",
+    "Total number of predictions made",
+    ["status"],
+)
+
+PREDICTION_LATENCY = Histogram(
+    "prediction_latency_seconds",
+    "Time spent on prediction in seconds",
+    buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
+)
+
+PREDICTION_VALUE = Histogram(
+    "prediction_value_minutes",
+    "Distribution of predicted trip durations",
+    buckets=(1, 5, 10, 15, 20, 30, 45, 60),
+)
+
+app.mount("/metrics", make_asgi_app())
+
 
 class TripFeatures(BaseModel):
     PULocationID: int = Field(..., example=100)
@@ -56,6 +77,7 @@ def root():
             "health": "/health",
             "predict": "/predict",
             "docs": "/docs",
+            "metrics": "/metrics",
         },
     }
 
@@ -71,11 +93,17 @@ def health():
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data: TripFeatures):
+    start_time = time.time()
+
     try:
         row = data.model_dump()
         features = pd.DataFrame([row], columns=FEATURE_COLUMNS)
 
         prediction = float(model.predict(features)[0])
+
+        PREDICTION_COUNT.labels(status="success").inc()
+        PREDICTION_LATENCY.observe(time.time() - start_time)
+        PREDICTION_VALUE.observe(prediction)
 
         return PredictionResponse(
             predicted_duration_minutes=prediction,
@@ -83,6 +111,7 @@ def predict(data: TripFeatures):
         )
 
     except Exception as e:
+        PREDICTION_COUNT.labels(status="error").inc()
         raise HTTPException(
             status_code=500,
             detail=f"Prediction failed: {e}",
