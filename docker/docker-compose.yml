@@ -16,6 +16,8 @@ services:
     volumes:
       - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
+    depends_on:
+      - ml-api
     restart: unless-stopped
 
   grafana:
